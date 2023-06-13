@@ -12,12 +12,13 @@ Then you can make requests by:
 import databases
 import sqlalchemy
 from fastapi import FastAPI
+from typing import Dict, List
 
 from scheme_table_for_fastapi import last_price_currency
 
 # Here you need to add your user_name, password, host, name_of_database
 db_user = 'postgres'
-db_password = '"<PASSWORD>"'
+db_password = '<PASSWORD>'
 db_host = 'localhost'
 db_port = 5432
 db_name = 'deribit_client'
@@ -40,7 +41,7 @@ async def shutdown():
 
 
 @app.get("/all_data")
-async def get_all_data_by_ticker(ticker_filter: str):  # TODO: add return type annotation
+async def get_all_data_by_ticker(ticker_filter: str) -> List:
     """
     Method returns all data from table `last_price_currency` by specified ticker:
     `ticker`, `last_price` and `unix_time`.
@@ -64,7 +65,7 @@ async def get_all_data_by_ticker(ticker_filter: str):  # TODO: add return type a
 
 
 @app.get("/last_price")
-async def get_last_price_by_ticker(ticker_filter: str):  # TODO: add return type annotation
+async def get_last_price_by_ticker(ticker_filter: str) -> Dict:
     """
     Method returns just one value - last price of ticker which will you choose.
     Link by default is http://127.0.0.1:8000/last_price?ticker_filter=TICKER.
@@ -89,13 +90,12 @@ async def get_last_price_by_ticker(ticker_filter: str):  # TODO: add return type
         return {"last_price": last_price}
     else:
         return {"error": "Ticker not found"}
-    return result
 
 
 @app.get("/price_by_unix_date")
-async def get_price_of_currency_by_data(ticker_filter: str, unix_time: int):  # TODO: add return type annotation
+async def get_price_of_currency_by_data(ticker_filter: str, unix_time: int) -> List:
     """
-    Method returns #TODO: (what?) for specific date.
+    Method returns price of ticker for specific date.
     ticker_filter: ticker of currency, for ex. BTC-PERPETUAL.
     unix_time: is date in unix format.
     return: price of ticker in specific date.

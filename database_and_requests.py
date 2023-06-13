@@ -1,5 +1,12 @@
-# TODO: the module docstring
+"""
+This file contains the RequestDerebit class, the PostgreSQL class, and the LastPriceCurrency class.
 
+RequestDerebit is an asynchronous client. Every minute he makes requests to the Deribit exchange and
+takes the value of Bitcoin and Ether.
+
+PostgreSQL class whose methods are also asynchronous. It adds the data received from the exchange to the table.
+
+"""
 import asyncio
 import json
 
@@ -10,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
+from typing import Dict, List
 
 Base = declarative_base()
 
@@ -38,9 +46,9 @@ class RequestDerebit:
             db_name="deribit_client", db_host="localhost", db_user="postgres", db_pass="<PASSWORD>", db_port=5432,
         )
 
-    async def request(self, message: dict):  # TODO: add return type annotation
+    async def request(self, message: dict) -> Dict:
         """
-        Doing request to exc and getting `last_price`, `instrument_name` from it.  # TODO update description
+        Doing request to exchange and getting data about last price from it.
         message: contains data for request
         """
         async with websockets.connect("wss://test.deribit.com/ws/api/v2/public/ticker") as websocket:
@@ -120,27 +128,29 @@ class PostgreSQL:
             user=self.engine.url.username,
             password=self.engine.url.password
         )
-        await conn.execute(f"CREATE DATABASE {self.db_name}")  # TODO: check if `IF NOT EXISTS` is not required.
+        await conn.execute(f"CREATE DATABASE {self.db_name}")
         await conn.close()
-        print("База данных deribit_client успешно создана")  # TODO translate
+        print("Deribit_client database successfully created")
 
     async def create_table(self):
         """Create table, if not exists."""
         async with self.engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)  # TODO: check if `IF NOT EXISTS` is not required.
-        print("Таблица last_price_currency успешно создана")  # TODO translate
+            await conn.run_sync(Base.metadata.create_all)
+        print("Last_price_currency table successfully created")
 
-    async def add_last_price_to_table(self, ticker: str, last_price: int, unix_time: int): # TODO add description to arguments. Check other on your own.
+    async def add_last_price_to_table(self, ticker: str, last_price: int, unix_time: int):
         """
         Func adds response (ticker, last price of currency, time in unix format) from exchange to table.
         `id` is created in the table by default (see `LastPriceCurrency`).
-        ticker: Describe what the argunebt is.  # TODO: Example
+        ticker: currency name, for example: 'ETH-PERPETUAL'
+        last_price: the price of the currency on the exchange at the time of the request
+        unix_time: the exact date and time the request was made (in unix format)
         """
         async with self.session_factory() as session:
             async with session.begin():
                 input_data = LastPriceCurrency(ticker=ticker, last_price=last_price, unix_time=unix_time)
                 session.add(input_data)
-            print(f"В таблицу last_price_currency добавлены данные: {ticker}, {last_price}, {unix_time}")  # TODO translate
+            print(f"Added data to last_price_currency table: {ticker}, {last_price}, {unix_time}")
 
 
 async def main():
