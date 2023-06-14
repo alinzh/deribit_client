@@ -17,7 +17,7 @@ from typing import Dict, List
 from scheme_table_for_fastapi import last_price_currency
 
 # Here you need to add your user_name, password, host, name_of_database
-db_user = 'postgres'
+db_user = '<PASSWORD>'
 db_password = '<PASSWORD>'
 db_host = 'localhost'
 db_port = 5432

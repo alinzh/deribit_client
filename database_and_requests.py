@@ -12,7 +12,7 @@ import json
 
 import asyncpg
 import websockets
-from sqlalchemy import Column, Integer, String, BigInteger, Sequence
+from sqlalchemy import Column, Integer, String, BigInteger
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import declarative_base
@@ -42,8 +42,9 @@ class RequestDerebit:
                 "instrument_name": "ETH-PERPETUAL",
             }
         }
+        # To add your personal data
         self.sql = PostgreSQL(
-            db_name="deribit_client", db_host="localhost", db_user="postgres", db_pass="<PASSWORD>", db_port=5432,
+            db_name="deribit_client", db_host="localhost", db_user="<USER_NAME>", db_pass="<PASSWORD>", db_port=5432,
         )
 
     async def request(self, message: dict) -> Dict:
@@ -81,7 +82,7 @@ class RequestDerebit:
                 if data is not None:
                     await self.add_data_to_table(data)
                 await asyncio.sleep(60)
-            except ConnectionError:
+            except:
                 continue
 
     async def create_tasks(self):
@@ -100,7 +101,7 @@ class LastPriceCurrency(Base):
     __tablename__ = "last_price_currency"
 
     # id will be created automatically
-    id = Column(Integer, Sequence("your_table_id_seq"), primary_key=True, autoincrement=True)  # TODO: undersrand what `your_table_id_seq` it is
+    id = Column(Integer, primary_key=True, autoincrement=True)
     ticker = Column(String(50))
     last_price = Column(Integer)
     unix_time = Column(BigInteger)
