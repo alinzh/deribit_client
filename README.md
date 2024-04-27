@@ -8,7 +8,7 @@ at a price at a particular time (note that the time is specified in unix format)
 
 # How to use
 Before running the program you need:
-1) Create a database in PostgraSQL. This can be done using a terminal or a windowed database application.
+1) Create a database in PostgreSQL. This can be done using a terminal or a windowed database application.
 2) Indicate in the code your personal data and the name of the database for the program to connect to it. This needs to be done in 'main.py' and 'database_and_requests.py'
 3) Create a table using the PostgreSQL.create_table function.
 4) Run the uvicorn server in a terminal from the root folder. 
